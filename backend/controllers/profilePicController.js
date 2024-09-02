@@ -1,7 +1,7 @@
-// controllers/profilePicController.js
 const User = require('../models/User');
 const ProfilePic = require('../models/profilePic');
 const aws = require('aws-sdk');
+const mongoose = require('mongoose');
 
 // Configure AWS SDK for S3
 const s3 = new aws.S3({
@@ -54,7 +54,14 @@ exports.uploadProfilePicture = async (req, res) => {
 // Get Profile Picture
 exports.getProfilePicture = async (req, res) => {
     try {
-        const profilePic = await ProfilePic.findOne({ user: req.params.id });
+        const userId = req.params.id;
+
+        // Ensure userId is a valid ObjectId
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ message: 'Invalid user ID' });
+        }
+
+        const profilePic = await ProfilePic.findOne({ user: userId });
 
         if (!profilePic) {
             return res.status(404).json({ message: 'Profile picture not found' });
@@ -72,14 +79,16 @@ exports.getProfilePictureByUsername = async (req, res) => {
     const { username } = req.params;
 
     try {
-        // Find user by username
+        // Find the user by username
         const user = await User.findOne({ username });
+
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Find profile picture by user ID
+        // Use the user's ObjectId (_id) to find the profile picture
         const profilePic = await ProfilePic.findOne({ user: user._id });
+
         if (!profilePic) {
             return res.status(404).json({ message: 'Profile picture not found' });
         }
