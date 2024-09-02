@@ -5,7 +5,7 @@ const { uploadFile } = require('./s3Upload'); // Adjust the path as needed
 const testFileUpload = async () => {
     try {
         // Path to the test file
-        const filePath = 'C:\\Users\\gowth\\OneDrive\\Pictures\\Saved Pictures\\1215681.jpg';
+        const filePath = 'C:\\Users\\*****\\***\\**\\****\\***.jpg';
         const file = {
             data: fs.readFileSync(filePath),
             name: path.basename(filePath),
